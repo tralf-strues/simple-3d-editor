@@ -13,6 +13,7 @@
 #include "sml/app/app.h"
 #include "sgl/scene/scene.h"
 #include "sgl/scene/containers/container.h"
+#include "sgl/scene/controls/button.h"
 
 constexpr size_t      EDITOR_WINDOW_WIDTH            = 1280;
 constexpr size_t      EDITOR_WINDOW_HEIGHT           = 720;
@@ -42,6 +43,8 @@ private:
 
     Sgl::Scene              m_Scene;
     Sgl::Container          m_SceneRoot;
+
+    Sgl::Button*            m_Button = nullptr;
 
     void proccessSystemEvents();
     void proccessWindowEvent(Sml::WindowEvent* event);

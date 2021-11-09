@@ -6,6 +6,7 @@
  * @copyright Copyright (c) 2021
  */
 
+#include "sml/graphics_wrapper/primitives.h" // FIXME: remove
 #include "editor_app.h"
 #include "sgl/core.h"
 
@@ -21,14 +22,36 @@ void EditorApplication::onInit()
     LOG_INFO("Application initialization started.");
 
     Sgl::setContextRenderer(&m_Renderer);
+
+    Sgl::DefaultSkins::g_DefaultFont = new Sml::Font("res/LucidaGrande.ttf", 16);
+
     m_Scene.setRoot(&m_SceneRoot);
+
+    class ButtonListener : public Sgl::ActionListener
+    {
+        virtual void onActionPerformed(Sgl::ActionEvent* event) override
+        {
+            LOG_INFO("Button pressed!");
+        }
+    };
+
+    m_Button = new Sgl::Button("Button");
+    m_Button->setLayoutX(10);
+    m_Button->setLayoutY(60);
+    m_Button->setOnAction(new ButtonListener());
+    m_SceneRoot.addChild(m_Button);
 
     LOG_INFO("Application initialization finished.");
 }
 
 int EditorApplication::onQuit()
 {
+    LOG_INFO("Application quitting.");
+
+    delete Sgl::DefaultSkins::g_DefaultFont;
+
     LOG_INFO("Application quit.");
+    
     return 0;
 }
 
@@ -38,6 +61,10 @@ void EditorApplication::onUpdate()
 
     m_Scene.update();
     m_Scene.render(m_Scene.getLayoutRegion());
+
+    // Sgl::getContextRenderer()->setColor(Sml::COLOR_YELLOW);
+    // Sml::renderFilledRect(Sgl::getContextRenderer(), {{20, 50}, 128, 32});
+
     m_Renderer.present();
 
     updateWindowTitle();
