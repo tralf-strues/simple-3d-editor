@@ -14,6 +14,7 @@
 #include "sgl/scene/scene.h"
 #include "sgl/scene/containers/container.h"
 #include "sgl/scene/controls/button.h"
+#include "sgl/scene/containers/menu_bar.h"
 
 constexpr size_t      EDITOR_WINDOW_WIDTH            = 1280;
 constexpr size_t      EDITOR_WINDOW_HEIGHT           = 720;
@@ -27,7 +28,8 @@ public:
         : Application(argc, argv),
           m_Window(EDITOR_WINDOW_WIDTH, EDITOR_WINDOW_HEIGHT, EDITOR_WINDOW_TITLE),
           m_Renderer(m_Window),
-          m_Scene(m_Window.getWidth(), m_Window.getHeight())
+          m_Scene(m_Window.getWidth(), m_Window.getHeight()),
+          m_MenuBar(&m_Scene)
     {}
 
     virtual void onInit() override;
@@ -44,7 +46,7 @@ private:
     Sgl::Scene              m_Scene;
     Sgl::Container          m_SceneRoot;
 
-    Sgl::Button*            m_Button = nullptr;
+    Sgl::MenuBar            m_MenuBar;
 
     void proccessSystemEvents();
     void proccessWindowEvent(Sml::WindowEvent* event);

@@ -6,9 +6,12 @@
  * @copyright Copyright (c) 2021
  */
 
-#include "sml/graphics_wrapper/primitives.h" // FIXME: remove
-#include "editor_app.h"
 #include "sgl/core.h"
+#include "sgl/scene/background.h"
+#include "editor_app.h"
+
+// const Sgl::ColorFill  MENU_BAR_FILL       = {Sml::COLOR_GREEN};
+// const Sgl::Background MENU_BAR_BACKGROUND = {{&MENU_BAR_FILL}, {}};
 
 int main(int argc, const char* argv[])
 {
@@ -22,24 +25,53 @@ void EditorApplication::onInit()
     LOG_INFO("Application initialization started.");
 
     Sgl::setContextRenderer(&m_Renderer);
-
     Sgl::DefaultSkins::g_DefaultFont = new Sml::Font("res/LucidaGrande.ttf", 16);
-
-    m_Scene.setRoot(&m_SceneRoot);
 
     class ButtonListener : public Sgl::ActionListener
     {
-        virtual void onActionPerformed(Sgl::ActionEvent* event) override
+    public:
+        Sgl::Button& button;
+
+        ButtonListener(Sgl::Button& button) : button(button) {}
+
+        virtual void onAction(Sgl::ActionEvent* event) override
         {
-            LOG_INFO("Button pressed!");
+            LOG_INFO("Button '%s' pressed!", button.getLabel());
         }
     };
 
-    m_Button = new Sgl::Button("Button");
-    m_Button->setLayoutX(10);
-    m_Button->setLayoutY(60);
-    m_Button->setOnAction(new ButtonListener());
-    m_SceneRoot.addChild(m_Button);
+    m_MenuBar.setPrefWidth(EDITOR_WINDOW_WIDTH);
+    Sgl::Menu* fileMenu = m_MenuBar.addMenu("File");
+    Sgl::Menu* editMenu = m_MenuBar.addMenu("Edit");
+    m_MenuBar.pushBackSpacer();
+    Sgl::Menu* quitMenu = m_MenuBar.addMenu("Quit");
+
+    fileMenu->getContextMenu()->addChild(new Sgl::MenuItem("File item 1"));
+    fileMenu->getContextMenu()->addChild(new Sgl::MenuItem("File item 2"));
+    fileMenu->getContextMenu()->addChild(new Sgl::MenuItem("File item 3"));
+    fileMenu->getContextMenu()->addChild(new Sgl::MenuItem("File item 4"));
+
+    // m_ButtonFile = new Sgl::Button("File");
+    // m_ButtonFile->setOnAction(new ButtonListener(*m_ButtonFile));
+    
+    // m_ButtonEdit = new Sgl::Button("Edit");
+    // m_ButtonEdit->setOnAction(new ButtonListener(*m_ButtonEdit));
+
+    // m_ButtonQuit = new Sgl::Button("Quit");
+    // m_ButtonQuit->setOnAction(new ButtonListener(*m_ButtonQuit));
+
+    // m_BoxContainer = new Sgl::BoxContainer(Sgl::BoxContainer::Direction::LEFT_TO_RIGHT);
+    // m_BoxContainer->setPrefWidth(EDITOR_WINDOW_WIDTH);
+    // m_BoxContainer->setFillAcross(true);
+    // m_BoxContainer->setBackground(&MENU_BAR_BACKGROUND);
+    // m_BoxContainer->setLayoutY(15);
+    // m_BoxContainer->addChild(m_ButtonFile);
+    // m_BoxContainer->addChild(m_ButtonEdit);
+    // m_BoxContainer->pushBackSpacer();
+    // m_BoxContainer->addChild(m_ButtonQuit);
+
+    m_SceneRoot.addChild(&m_MenuBar);
+    m_Scene.setRoot(&m_SceneRoot);
 
     LOG_INFO("Application initialization finished.");
 }
@@ -61,9 +93,6 @@ void EditorApplication::onUpdate()
 
     m_Scene.update();
     m_Scene.render(m_Scene.getLayoutRegion());
-
-    // Sgl::getContextRenderer()->setColor(Sml::COLOR_YELLOW);
-    // Sml::renderFilledRect(Sgl::getContextRenderer(), {{20, 50}, 128, 32});
 
     m_Renderer.present();
 
