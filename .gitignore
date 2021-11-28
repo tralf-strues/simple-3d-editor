@@ -1040,3 +1040,5 @@ dkms.conf
 # CUSTOM
 .vscode
 libs/
+compile_debug.sh
+compile_release.sh

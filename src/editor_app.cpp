@@ -6,12 +6,37 @@
  * @copyright Copyright (c) 2021
  */
 
-#include "sgl/core.h"
+#include "sml/sml_log.h"
 #include "sgl/scene/background.h"
 #include "editor_app.h"
 
-// const Sgl::ColorFill  MENU_BAR_FILL       = {Sml::COLOR_GREEN};
-// const Sgl::Background MENU_BAR_BACKGROUND = {{&MENU_BAR_FILL}, {}};
+class DraggableButtonListener : public Sgl::DragListener<Sgl::Button>
+{
+public:
+    DEFINE_STATIC_LISTENED_EVENT_TYPES_FROM_BASE_CLASS(Sgl::DragListener<Sgl::Button>)
+
+public:
+    DraggableButtonListener(Sgl::Button* button) : Sgl::DragListener<Sgl::Button>(button) {}
+
+    virtual void onDragStart(Sgl::DragStartEvent* event) override
+    {
+        LOG_APP_INFO("DragStartEvent triggered");
+    }
+
+    virtual void onDragEnd(Sgl::DragEndEvent* event) override
+    {
+        LOG_APP_INFO("DragEndEvent triggered");
+    }
+
+    virtual void onDragMove(Sgl::DragMoveEvent* event) override
+    {
+        Sgl::Button* button = dynamic_cast<Sgl::Button*>(event->getTarget());
+        button->setLayoutX(button->getLayoutX() + event->getDeltaX());
+        button->setLayoutY(button->getLayoutY() + event->getDeltaY());
+
+        LOG_APP_INFO("DragMoveEvent<%d, %d> triggered", event->getDeltaX(), event->getDeltaY());
+    }
+};
 
 int main(int argc, const char* argv[])
 {
@@ -22,67 +47,94 @@ int main(int argc, const char* argv[])
 
 void EditorApplication::onInit()
 {
-    LOG_INFO("Application initialization started.");
+    LOG_APP_INFO("Application initialization started.");
 
-    Sgl::setContextRenderer(&m_Renderer);
+    Sml::Renderer::init(&m_Window);
     Sgl::DefaultSkins::g_DefaultFont = new Sml::Font("res/LucidaGrande.ttf", 16);
+    Resources::load();
 
-    class ButtonListener : public Sgl::ActionListener
-    {
-    public:
-        Sgl::Button& button;
+    m_MenuBar = new Sgl::MenuBar(&m_Scene);
 
-        ButtonListener(Sgl::Button& button) : button(button) {}
-
-        virtual void onAction(Sgl::ActionEvent* event) override
-        {
-            LOG_INFO("Button '%s' pressed!", button.getLabel());
-        }
-    };
-
-    m_MenuBar.setPrefWidth(EDITOR_WINDOW_WIDTH);
-    Sgl::Menu* fileMenu = m_MenuBar.addMenu("File");
-    Sgl::Menu* editMenu = m_MenuBar.addMenu("Edit");
-    m_MenuBar.pushBackSpacer();
-    Sgl::Menu* quitMenu = m_MenuBar.addMenu("Quit");
+    m_MenuBar->setPrefWidth(EDITOR_WINDOW_WIDTH);
+    Sgl::Menu* fileMenu = m_MenuBar->addMenu("File");
+    Sgl::Menu* editMenu = m_MenuBar->addMenu("Edit");
+    m_MenuBar->pushBackSpacer();
+    Sgl::Menu* quitMenu = m_MenuBar->addMenu("Quit");
 
     fileMenu->getContextMenu()->addChild(new Sgl::MenuItem("File item 1"));
     fileMenu->getContextMenu()->addChild(new Sgl::MenuItem("File item 2"));
     fileMenu->getContextMenu()->addChild(new Sgl::MenuItem("File item 3"));
     fileMenu->getContextMenu()->addChild(new Sgl::MenuItem("File item 4"));
 
-    // m_ButtonFile = new Sgl::Button("File");
-    // m_ButtonFile->setOnAction(new ButtonListener(*m_ButtonFile));
-    
-    // m_ButtonEdit = new Sgl::Button("Edit");
-    // m_ButtonEdit->setOnAction(new ButtonListener(*m_ButtonEdit));
+    editMenu->getContextMenu()->addChild(new Sgl::MenuItem("Edit item 1"));
+    editMenu->getContextMenu()->addChild(new Sgl::MenuItem("Edit item 2"));
+    editMenu->getContextMenu()->addChild(new Sgl::MenuItem("Edit item 3"));
+    editMenu->getContextMenu()->addChild(new Sgl::MenuItem("Edit item 4"));
+    editMenu->getContextMenu()->addChild(new Sgl::MenuItem("Edit item 5"));
+    editMenu->getContextMenu()->addChild(new Sgl::MenuItem("Edit item 6"));
 
-    // m_ButtonQuit = new Sgl::Button("Quit");
-    // m_ButtonQuit->setOnAction(new ButtonListener(*m_ButtonQuit));
+    class DraggableButtonActionListener : public Sgl::ActionListener<Sgl::Button>
+    {
+        virtual void onAction(Sgl::ActionEvent* event) override
+        {
+            LOG_APP_INFO("ActionEvent triggered on m_DraggableButton");
+            getComponent()->requestDrag();
+        }
+    };
 
-    // m_BoxContainer = new Sgl::BoxContainer(Sgl::BoxContainer::Direction::LEFT_TO_RIGHT);
-    // m_BoxContainer->setPrefWidth(EDITOR_WINDOW_WIDTH);
-    // m_BoxContainer->setFillAcross(true);
-    // m_BoxContainer->setBackground(&MENU_BAR_BACKGROUND);
-    // m_BoxContainer->setLayoutY(15);
-    // m_BoxContainer->addChild(m_ButtonFile);
-    // m_BoxContainer->addChild(m_ButtonEdit);
-    // m_BoxContainer->pushBackSpacer();
-    // m_BoxContainer->addChild(m_ButtonQuit);
+    m_DraggableButton = new Sgl::Button("Drag me if you dare!");
+    m_DraggableButton->setLayoutX(50);
+    m_DraggableButton->setLayoutY(50);
+    m_DraggableButton->setOnAction(new DraggableButtonActionListener());
+    m_DraggableButton->setScene(&m_Scene); // FIXME:
+    m_DraggableButton->getEventDispatcher()->attachHandler(DraggableButtonListener::EVENT_TYPES,
+                                                           new DraggableButtonListener(m_DraggableButton));
 
-    m_SceneRoot.addChild(&m_MenuBar);
-    m_Scene.setRoot(&m_SceneRoot);
+    m_InnerWindow = new InnerWindow("Inner Window", &m_Scene);
+    m_InnerWindow->setLayoutX(150);
+    m_InnerWindow->setLayoutY(150);
+    m_InnerWindow->setPrefWidth(400);
+    // m_InnerWindow->setPrefHeight(500);
 
-    LOG_INFO("Application initialization finished.");
+    // Sgl::ColorFill* colorFill = new Sgl::ColorFill(Sml::COLOR_RED);
+    // Sgl::Background* background = new Sgl::Background(colorFill);
+
+    Canvas* canvas = new Canvas{300, 300};
+    canvas->setPrefHeight(400);
+    // canvas->setBackground(background);
+    m_InnerWindow->addChild(canvas);
+    m_InnerWindow->setGrowPriority(canvas, Sgl::BoxContainer::GrowPriority::ALWAYS);
+
+    class MouseMoveListener : public Sml::Listener
+    {
+    public:
+        virtual void onEvent(Sml::Event* event) override
+        {
+            Sml::MouseMovedEvent* mouseMovedEvent = dynamic_cast<Sml::MouseMovedEvent*>(event);
+            LOG_APP_INFO("MouseMovedEvent: <%d, %d>\n", mouseMovedEvent->getX(), mouseMovedEvent->getY());
+        }
+    };
+
+    m_SceneRoot = new Sgl::Container();
+    m_SceneRoot->addChild(m_DraggableButton);
+    m_SceneRoot->addChild(m_MenuBar);
+    m_SceneRoot->addChild(m_InnerWindow);
+
+    // m_SceneRoot->getEventDispatcher()->attachHandler({Sml::MouseMovedEvent::getStaticType()},
+    //                                                   new MouseMoveListener());
+
+    m_Scene.setRoot(m_SceneRoot);
+
+    LOG_APP_INFO("Application initialization finished.");
 }
 
 int EditorApplication::onQuit()
 {
-    LOG_INFO("Application quitting.");
+    LOG_APP_INFO("Application quitting.");
 
     delete Sgl::DefaultSkins::g_DefaultFont;
 
-    LOG_INFO("Application quit.");
+    LOG_APP_INFO("Application quit.");
     
     return 0;
 }
@@ -94,7 +146,7 @@ void EditorApplication::onUpdate()
     m_Scene.update();
     m_Scene.render(m_Scene.getLayoutRegion());
 
-    m_Renderer.present();
+    Sml::Renderer::getInstance().present();
 
     updateWindowTitle();
 }
@@ -115,7 +167,7 @@ void EditorApplication::proccessSystemEvents()
         }
         else
         {
-            // LOG_INFO("Skipping event (EventType = %" PRIu32 ", EventCategory = %" PRIu64 ")",
+            // LOG_APP_INFO("Skipping event (EventType = %" PRIu32 ", EventCategory = %" PRIu64 ")",
             //          nextEvent->getType(),
             //          nextEvent->getCategory());
         }
@@ -132,7 +184,7 @@ void EditorApplication::proccessWindowEvent(Sml::WindowEvent* event)
     {
         case Sml::WindowCloseEvent::getStaticType():
         {
-            LOG_INFO("WindowCloseEvent");
+            LOG_APP_INFO("WindowCloseEvent");
 
             stop();
             break;
