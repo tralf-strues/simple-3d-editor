@@ -58,16 +58,18 @@ public:
 
     virtual void onMouseEntered(Sgl::MouseEnteredEvent* event)
     {
-        getComponent()->setIcon(Resources::ICON_CLOSE_HOVERED);
+        getComponent()->setIcon(RESOURCE_IMAGE(InnerWindow::ICON_CLOSE_HOVERED));
     }
 
     virtual void onMouseExited(Sgl::MouseExitedEvent* event)
     {
-        getComponent()->setIcon(Resources::ICON_CLOSE_IDLE);
+        getComponent()->setIcon(RESOURCE_IMAGE(InnerWindow::ICON_CLOSE_IDLE));
     }
 };
 
-const Sgl::Border InnerWindow::DEFAULT_BORDER = {1, 0xE9'E9'E9'FF};
+const Sgl::Border InnerWindow::DEFAULT_BORDER     = {1, 0xE9'E9'E9'FF};
+const char*       InnerWindow::ICON_CLOSE_IDLE    = "icons/close_idle_32.png";
+const char*       InnerWindow::ICON_CLOSE_HOVERED = "icons/close_hovered_32.png";
 
 InnerWindow::InnerWindow(const char* title, Sgl::Scene* scene)
     : m_Title(title)
@@ -77,7 +79,9 @@ InnerWindow::InnerWindow(const char* title, Sgl::Scene* scene)
     setBorder(&DEFAULT_BORDER);
 
     m_TitleLabel = new Sgl::Text(*Sgl::DefaultSkins::g_DefaultFont, title);
-    m_CloseButton = new Sgl::Button(new Sgl::DefaultSkins::ButtonPlaneSkin, Resources::ICON_CLOSE_IDLE);
+    m_CloseButton = new Sgl::Button(new Sgl::DefaultSkins::ButtonPlaneSkin,
+                                    RESOURCE_IMAGE(InnerWindow::ICON_CLOSE_IDLE));
+
     m_CloseButton->getEventDispatcher()->attachHandler(CloseButtonHoverListener::EVENT_TYPES,
                                                        new CloseButtonHoverListener(m_CloseButton));
 

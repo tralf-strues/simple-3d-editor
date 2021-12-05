@@ -15,7 +15,7 @@
 #include "sgl/scene/containers/anchor_pane.h"
 #include "sgl/scene/controls/button.h"
 #include "sgl/scene/containers/menu_bar.h"
-#include "resources.h"
+#include "resource_manager.h"
 #include "inner_window.h"
 #include "canvas.h"
 

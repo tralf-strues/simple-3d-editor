@@ -37,7 +37,7 @@ public:
     {
         LOG_APP_INFO("CanvasDragListener::onDragStart() called");
 
-        Sml::Vec2<int32_t> localPos = getComponent()->computeSceneToLocalPos({event->getX(), event->getY()});
+        Sml::Vec2i localPos = getComponent()->computeSceneToLocalPos({event->getX(), event->getY()});
         m_CurX = localPos.x - getComponent()->getTexturePos().x;
         m_CurY = localPos.y - getComponent()->getTexturePos().y;
     }
@@ -125,11 +125,8 @@ int32_t Canvas::computeCustomPrefHeight(int32_t width) const
     return m_Texture->getHeight();
 }
 
-Sml::Vec2<int32_t> Canvas::getTexturePos() const
+Sml::Vec2i Canvas::getTexturePos() const
 {
-    Sml::Vec2<int32_t> pos = getLayoutPos();
-    pos.x = (getLayoutWidth()  - m_Texture->getWidth()) / 2;
-    pos.y = (getLayoutHeight() - m_Texture->getHeight()) / 2;
-
-    return pos;
+    return Sml::Vec2i((getLayoutWidth()  - m_Texture->getWidth())  / 2,
+                      (getLayoutHeight() - m_Texture->getHeight()) / 2);
 }

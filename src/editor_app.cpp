@@ -53,7 +53,7 @@ void EditorApplication::onInit()
 
     Sml::Renderer::init(&m_Window);
     Sgl::DefaultSkins::g_DefaultFont = new Sml::Font("res/LucidaGrande.ttf", 16);
-    Resources::load();
+    ResourceManager::init("res/");
 
     m_SceneRoot = new Sgl::AnchorPane();
 

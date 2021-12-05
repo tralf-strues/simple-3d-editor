@@ -10,12 +10,14 @@
 
 #include "sgl/scene/containers/box_container.h"
 #include "sgl/scene/containers/menu_bar.h"
-#include "resources.h"
+#include "resource_manager.h"
 
 class InnerWindow : public Sgl::VBox
 {
 public:
     static const Sgl::Border DEFAULT_BORDER;
+    static const char*       ICON_CLOSE_IDLE;
+    static const char*       ICON_CLOSE_HOVERED;
 
 public:
     InnerWindow(const char* title, Sgl::Scene* scene);

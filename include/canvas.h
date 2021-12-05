@@ -21,7 +21,7 @@ public:
     virtual ~Canvas() override;
 
     Sml::Texture* getTexture();
-    Sml::Vec2<int32_t> getTexturePos() const;
+    Sml::Vec2i getTexturePos() const;
 
 private:
     Sml::Texture* m_Texture = nullptr;
