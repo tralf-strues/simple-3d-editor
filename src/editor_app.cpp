@@ -8,6 +8,8 @@
 
 #include "sml/sml_log.h"
 #include "sgl/scene/background.h"
+#include "sgl/scene/containers/tile_pane.h"
+#include "sgl/scene/controls/slider.h"
 #include "editor_app.h"
 
 class DraggableButtonListener : public Sgl::DragListener<Sgl::Button>
@@ -53,6 +55,8 @@ void EditorApplication::onInit()
     Sgl::DefaultSkins::g_DefaultFont = new Sml::Font("res/LucidaGrande.ttf", 16);
     Resources::load();
 
+    m_SceneRoot = new Sgl::AnchorPane();
+
     m_MenuBar = new Sgl::MenuBar(&m_Scene);
 
     m_MenuBar->setPrefWidth(EDITOR_WINDOW_WIDTH);
@@ -83,15 +87,15 @@ void EditorApplication::onInit()
     };
 
     m_DraggableButton = new Sgl::Button("Drag me if you dare!");
-    m_DraggableButton->setLayoutX(50);
-    m_DraggableButton->setLayoutY(50);
+    m_DraggableButton->setLayoutX(300);
+    m_DraggableButton->setLayoutY(100);
     m_DraggableButton->setOnAction(new DraggableButtonActionListener());
     m_DraggableButton->setScene(&m_Scene); // FIXME:
     m_DraggableButton->getEventDispatcher()->attachHandler(DraggableButtonListener::EVENT_TYPES,
                                                            new DraggableButtonListener(m_DraggableButton));
 
     m_InnerWindow = new InnerWindow("Inner Window", &m_Scene);
-    m_InnerWindow->setLayoutX(150);
+    m_InnerWindow->setLayoutX(450);
     m_InnerWindow->setLayoutY(150);
     m_InnerWindow->setPrefWidth(400);
     // m_InnerWindow->setPrefHeight(500);
@@ -115,10 +119,44 @@ void EditorApplication::onInit()
         }
     };
 
-    m_SceneRoot = new Sgl::Container();
+    Sgl::TilePane* tilePane = new Sgl::TilePane(2);
+    m_SceneRoot->addChild(tilePane);
+    m_SceneRoot->setLeftAnchor(tilePane, 10);
+    tilePane->setLayoutX(50);
+    tilePane->setLayoutY(200);
+    tilePane->addChild(new Sgl::Button("1"));
+    tilePane->addChild(new Sgl::Button("2"));
+    tilePane->addChild(new Sgl::Button("3"));
+    tilePane->addChild(new Sgl::Button("4"));
+    tilePane->addChild(new Sgl::Button("5"));
+    tilePane->addChild(new Sgl::Button("6"));
+    tilePane->addChild(new Sgl::Button("7"));
+    tilePane->addChild(new Sgl::Button("8"));
+    tilePane->addChild(new Sgl::Button("9"));
+
+    Sgl::Slider* slider = new Sgl::Slider(-10, 10);
+    slider->setPrefWidth(100);
+    slider->setLayoutX(300);
+    slider->setLayoutY(300);
+
+    static Sgl::ShadowSpecification sliderShadow{{0, 0}, {1, 1}, 3, 0x11'11'11'66};
+    slider->setShadow(&sliderShadow);
+
+    class SliderListener : public Sml::PropertyChangeListener<float>
+    {
+    public:
+        virtual void onPropertyChange(Sml::PropertyChangeEvent<float>* event) override
+        {
+            LOG_APP_INFO("SliderListener::onPropertyChange(%f -> %f)", event->getOldValue(), event->getNewValue());
+        }
+    };
+
+    slider->setOnPropertyChange(new SliderListener());
+
     m_SceneRoot->addChild(m_DraggableButton);
     m_SceneRoot->addChild(m_MenuBar);
     m_SceneRoot->addChild(m_InnerWindow);
+    m_SceneRoot->addChild(slider);
 
     // m_SceneRoot->getEventDispatcher()->attachHandler({Sml::MouseMovedEvent::getStaticType()},
     //                                                   new MouseMoveListener());

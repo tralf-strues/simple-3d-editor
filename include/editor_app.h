@@ -12,7 +12,7 @@
 #include "sml/events/system_event_manager.h"
 #include "sml/app/app.h"
 #include "sgl/scene/scene.h"
-#include "sgl/scene/containers/container.h"
+#include "sgl/scene/containers/anchor_pane.h"
 #include "sgl/scene/controls/button.h"
 #include "sgl/scene/containers/menu_bar.h"
 #include "resources.h"
@@ -44,7 +44,7 @@ private:
     char                    m_WindowTitle[EDITOR_MAX_WINDOW_TITLE_LENGTH];
 
     Sgl::Scene              m_Scene;
-    Sgl::Container*         m_SceneRoot;
+    Sgl::AnchorPane*        m_SceneRoot;
 
     Sgl::MenuBar*           m_MenuBar;
     Sgl::Button*            m_DraggableButton = nullptr;
