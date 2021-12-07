@@ -23,6 +23,8 @@ public:
     InnerWindow(const char* title, Sgl::Scene* scene);
     virtual ~InnerWindow() = default;
 
+    void updateTitle(const char* title);
+
 private:
     const char*   m_Title       = nullptr;
     

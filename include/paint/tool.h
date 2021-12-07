@@ -9,19 +9,20 @@
 #pragma once
 
 #include "sml/sml_math.h"
+#include "sml/sml_graphics_wrapper.h"
 
 namespace Paint
 {
     class Tool
     {
     public:
-        virtual ~Tool() {}
+        virtual ~Tool() = default;
 
         virtual const char* getName() const = 0;
         virtual const char* getIconFilename() const = 0;
 
-        virtual void onActionBegin(const Sml::Vec2i& pos) = 0;
-        virtual void onAction(const Sml::Vec2i& pos, const Sml::Vec2i& displacement) = 0;
-        virtual void onActionEnd(const Sml::Vec2i& pos) = 0;
+        virtual void onActionStart(const Sml::Vec2i& pos) {}
+        virtual void onAction(const Sml::Vec2i& pos, const Sml::Vec2i& displacement) {}
+        virtual void onActionEnd(const Sml::Vec2i& pos) {}
     };
 };

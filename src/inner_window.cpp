@@ -67,13 +67,15 @@ public:
     }
 };
 
-const Sgl::Border InnerWindow::DEFAULT_BORDER     = {1, 0xE9'E9'E9'FF};
-const char*       InnerWindow::ICON_CLOSE_IDLE    = "icons/close_idle_32.png";
-const char*       InnerWindow::ICON_CLOSE_HOVERED = "icons/close_hovered_32.png";
+const Sgl::Border InnerWindow::DEFAULT_BORDER     = {1, 0xD9'D9'D9'FF};
+const char*       InnerWindow::ICON_CLOSE_IDLE    = "icons/close_32_idle.png";
+const char*       InnerWindow::ICON_CLOSE_HOVERED = "icons/close_32_hovered.png";
 
-InnerWindow::InnerWindow(const char* title, Sgl::Scene* scene)
-    : m_Title(title)
+InnerWindow::InnerWindow(const char* title, Sgl::Scene* scene) : m_Title(title)
 {
+    assert(title);
+    assert(scene);
+
     setScene(scene);
     setFillAcross(true);
     setBorder(&DEFAULT_BORDER);
@@ -97,4 +99,10 @@ InnerWindow::InnerWindow(const char* title, Sgl::Scene* scene)
                                                    new WindowDragListener(this, m_MenuBar));
 
     addChild(m_MenuBar);
+}
+
+void InnerWindow::updateTitle(const char* title)
+{
+    assert(title);
+    m_TitleLabel->setString(title);
 }

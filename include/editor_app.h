@@ -17,7 +17,10 @@
 #include "sgl/scene/containers/menu_bar.h"
 #include "resource_manager.h"
 #include "inner_window.h"
-#include "canvas.h"
+#include "paint/tool_panel.h"
+#include "paint/paint_editor.h"
+#include "paint/basic_tools.h"
+#include "paint/document_view.h"
 
 constexpr size_t      EDITOR_WINDOW_WIDTH            = 1280;
 constexpr size_t      EDITOR_WINDOW_HEIGHT           = 720;
@@ -29,9 +32,7 @@ class EditorApplication : public Sml::Application
 public:
     EditorApplication(int32_t argc, const char* argv[])
         : Application(argc, argv),
-          m_Window(EDITOR_WINDOW_WIDTH, EDITOR_WINDOW_HEIGHT, EDITOR_WINDOW_TITLE),
-          m_Scene(m_Window.getWidth(), m_Window.getHeight())
-    {}
+          m_Window(EDITOR_WINDOW_WIDTH, EDITOR_WINDOW_HEIGHT, EDITOR_WINDOW_TITLE) {}
 
     virtual void onInit() override;
     virtual int onQuit() override;
@@ -43,12 +44,21 @@ private:
 
     char                    m_WindowTitle[EDITOR_MAX_WINDOW_TITLE_LENGTH];
 
-    Sgl::Scene              m_Scene;
+    Sgl::Scene*             m_Scene;
     Sgl::AnchorPane*        m_SceneRoot;
 
     Sgl::MenuBar*           m_MenuBar;
-    Sgl::Button*            m_DraggableButton = nullptr;
+
+    Paint::ToolPanel*       m_ToolPanel;
+
+
     InnerWindow*            m_InnerWindow     = nullptr;
+
+    void initSystem();
+    void initEditor();
+
+    void initView();
+    void initMenuBar();
 
     void proccessSystemEvents();
     void proccessWindowEvent(Sml::WindowEvent* event);

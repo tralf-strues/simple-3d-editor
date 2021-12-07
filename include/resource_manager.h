@@ -10,7 +10,7 @@
 
 #include <unordered_map>
 #include <string>
-#include "sgl/scene/media/image.h"
+#include "sgl/media/image.h"
 
 #define RESOURCE_IMAGE(filename) ResourceManager::getInstance().getImage(filename)
 
