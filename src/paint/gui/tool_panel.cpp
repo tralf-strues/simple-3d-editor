@@ -22,7 +22,10 @@ const Sgl::Background ToolPanel::DEFAULT_BACKGROUND      = {&DEFAULT_BACKGROUND_
 const int32_t         ToolPanel::DEFAULT_HGAP            = 2;
 const int32_t         ToolPanel::DEFAULT_VGAP            = 2;
 
-ToolPanel::ToolPanel() : m_View(new Sgl::VBox()), m_Tools(new Sgl::TilePane()), m_ColorPicker(new ColorPickerWidget())
+ToolPanel::ToolPanel()
+    : m_View(new Sgl::VBox()),
+      m_Tools(new Sgl::TilePane()),
+      m_ColorSwitcher(new BackgroundForegroundSwitcher())
 {
     getView()->setPadding(DEFAULT_PADDING);
     getView()->setBorder(&DEFAULT_BORDER);
@@ -36,7 +39,7 @@ ToolPanel::ToolPanel() : m_View(new Sgl::VBox()), m_Tools(new Sgl::TilePane()), 
 
     m_View->addChild(new Sgl::Text("Tools"));
     m_View->addChild(m_Tools);
-    m_View->addChild(m_ColorPicker);
+    m_View->addChild(m_ColorSwitcher);
 }
 
 ToolPanel::~ToolPanel()

@@ -10,7 +10,7 @@
 
 #include "sgl/scene/containers/box_container.h"
 #include "sgl/scene/containers/tile_pane.h"
-#include "paint/gui/color_picker_widget.h"
+#include "paint/gui/background_foreground_switcher.h"
 
 namespace Paint
 {
@@ -33,8 +33,8 @@ namespace Paint
         void loadTools();
 
     private:
-        Sgl::VBox*         m_View        = nullptr;
-        Sgl::TilePane*     m_Tools       = nullptr;
-        ColorPickerWidget* m_ColorPicker = nullptr;
+        Sgl::VBox*                    m_View          = nullptr;
+        Sgl::TilePane*                m_Tools         = nullptr;
+        BackgroundForegroundSwitcher* m_ColorSwitcher = nullptr;
     };
 };

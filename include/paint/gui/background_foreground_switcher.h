@@ -1,6 +1,6 @@
 /**
  * @author Nikita Mochalov (github.com/tralf-strues)
- * @file color_picker_widget.h
+ * @file background_foreground_switcher.h
  * @date 2021-12-07
  * 
  * @copyright Copyright (c) 2021
@@ -13,10 +13,10 @@
 
 namespace Paint
 {
-    class ColorPickerWidget : public Sgl::Control
+    class BackgroundForegroundSwitcher : public Sgl::Control
     {
     public:
-        ColorPickerWidget();
-        virtual ~ColorPickerWidget() override = default;
+        BackgroundForegroundSwitcher();
+        virtual ~BackgroundForegroundSwitcher() override = default;
     };
 };
