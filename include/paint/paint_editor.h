@@ -36,6 +36,12 @@ namespace Paint
         const std::list<Document*>& getDocuments() const;
         void addDocument(Document* document);
 
+        Sml::Color getBackground() const;
+        void setBackground(Sml::Color background);
+
+        Sml::Color getForeground() const;
+        void setForeground(Sml::Color foreground);
+
     private:
         static Editor*       s_Instance;
 
@@ -44,6 +50,9 @@ namespace Paint
 
         Document*            m_ActiveDocument = nullptr;
         std::list<Document*> m_Documents;
+
+        Sml::Color           m_Background = Sml::COLOR_WHITE;
+        Sml::Color           m_Foreground = Sml::COLOR_BLACK;
 
     private:
         Editor() = default;

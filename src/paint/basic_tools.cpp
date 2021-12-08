@@ -7,6 +7,7 @@
  */
 
 #include "paint/basic_tools.h"
+#include "paint/paint_editor.h"
 
 using namespace Paint;
 
@@ -17,6 +18,9 @@ void Brush::onAction(const Sml::Vec2i& pos, const Sml::Vec2i& displacement)
 {
     Sml::Renderer& renderer = Sml::Renderer::getInstance();
 
-    renderer.setColor(Sml::COLOR_BLACK);
-    Sml::renderLine(pos - displacement, pos);
+    renderer.setColor(Editor::getInstance().getForeground());
+    Sml::renderLine(pos - displacement, pos, m_Thickness);
 }
+
+int32_t Brush::getThickness() const         { return m_Thickness; }
+void Brush::setThickness(int32_t thickness) { assert(thickness > 0); m_Thickness = thickness; }

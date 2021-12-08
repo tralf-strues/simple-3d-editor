@@ -8,8 +8,8 @@
 
 #pragma once
 
-#include "../inner_window.h"
-#include "document.h"
+#include "../../inner_window.h"
+#include "../document.h"
 
 namespace Paint
 {

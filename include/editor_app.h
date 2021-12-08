@@ -17,10 +17,10 @@
 #include "sgl/scene/containers/menu_bar.h"
 #include "resource_manager.h"
 #include "inner_window.h"
-#include "paint/tool_panel.h"
 #include "paint/paint_editor.h"
 #include "paint/basic_tools.h"
-#include "paint/document_view.h"
+#include "paint/gui/tool_panel.h"
+#include "paint/gui/document_view.h"
 
 constexpr size_t      EDITOR_WINDOW_WIDTH            = 1280;
 constexpr size_t      EDITOR_WINDOW_HEIGHT           = 720;
@@ -40,25 +40,21 @@ public:
 
 private:
     Sml::Window             m_Window;
-    Sml::SystemEventManager m_SystemEventManager;
-
     char                    m_WindowTitle[EDITOR_MAX_WINDOW_TITLE_LENGTH];
+    Sml::SystemEventManager m_SystemEventManager;
 
     Sgl::Scene*             m_Scene;
     Sgl::AnchorPane*        m_SceneRoot;
 
     Sgl::MenuBar*           m_MenuBar;
-
     Paint::ToolPanel*       m_ToolPanel;
-
-
-    InnerWindow*            m_InnerWindow     = nullptr;
 
     void initSystem();
     void initEditor();
 
     void initView();
     void initMenuBar();
+    void initToolPanel();
 
     void proccessSystemEvents();
     void proccessWindowEvent(Sml::WindowEvent* event);

@@ -77,3 +77,9 @@ void Editor::addDocument(Document* document)
     assert(document);
     m_Documents.push_back(document);
 }
+
+Sml::Color Editor::getBackground() const { return m_Background; }
+void Editor::setBackground(Sml::Color background) { m_Background = background; }
+
+Sml::Color Editor::getForeground() const { return m_Foreground; }
+void Editor::setForeground(Sml::Color foreground) { m_Foreground = foreground; }

@@ -84,17 +84,7 @@ void EditorApplication::initView()
     m_Scene->setRoot(m_SceneRoot);
 
     initMenuBar();
-
-    /* Inner window */
-    m_SceneRoot->addChild(m_InnerWindow = new InnerWindow("Inner Window", m_Scene));
-    m_InnerWindow->setLayoutX(450);
-    m_InnerWindow->setLayoutY(150);
-    m_InnerWindow->setPrefWidth(400);
-
-    // Canvas* canvas = new Canvas{300, 300};
-    // canvas->setPrefHeight(400);
-    // m_InnerWindow->addChild(canvas);
-    // m_InnerWindow->setGrowPriority(canvas, Sgl::BoxContainer::GrowPriority::ALWAYS);
+    initToolPanel();
 
     /* Mouse logger */
     // class MouseMoveListener : public Sml::Listener
@@ -152,6 +142,10 @@ void EditorApplication::initMenuBar()
             Paint::Editor::getInstance().setActiveDocument(document);
 
             Paint::DocumentView* documentView = new Paint::DocumentView(document, getComponent()->getScene());
+            InnerWindow* component = documentView->getView();
+            component->setLayoutX((component->getScene()->getWidth()  - component->computePrefWidth())  / 2);
+            component->setLayoutY((component->getScene()->getHeight() - component->computePrefHeight()) / 2);
+
             getComponent()->getScene()->getRoot()->addChild(documentView->getView());
         }
     };
@@ -170,6 +164,20 @@ void EditorApplication::initMenuBar()
     editMenu->getContextMenu()->addChild(new Sgl::MenuItem("Edit item 4"));
     editMenu->getContextMenu()->addChild(new Sgl::MenuItem("Edit item 5"));
     editMenu->getContextMenu()->addChild(new Sgl::MenuItem("Edit item 6"));
+}
+
+void EditorApplication::initToolPanel()
+{
+    m_ToolPanel = new Paint::ToolPanel();
+    m_SceneRoot->addChild(m_ToolPanel->getView());
+
+    m_SceneRoot->setTopAnchor(m_ToolPanel->getView(), 1);
+    m_SceneRoot->setBottomAnchor(m_ToolPanel->getView(), 1);
+    m_SceneRoot->setVerticalRelativePositioning(m_ToolPanel->getView(), true);
+
+    m_SceneRoot->setLeftAnchor(m_ToolPanel->getView(), 5);
+
+    m_ToolPanel->loadTools();
 }
 
 int EditorApplication::onQuit()

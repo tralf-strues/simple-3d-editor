@@ -19,5 +19,11 @@ namespace Paint
         virtual const char* getIconFilename() const override;
 
         virtual void onAction(const Sml::Vec2i& pos, const Sml::Vec2i& displacement) override;
+
+        int32_t getThickness() const;
+        void setThickness(int32_t thickness);
+
+    private:
+        int32_t m_Thickness = 10;
     };
 };

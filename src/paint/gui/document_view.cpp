@@ -6,7 +6,7 @@
  * @copyright Copyright (c) 2021
  */
 
-#include "paint/document_view.h"
+#include "paint/gui/document_view.h"
 #include "paint/paint_editor.h"
 
 using namespace Paint;
