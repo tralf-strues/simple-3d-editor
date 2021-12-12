@@ -55,9 +55,28 @@ Sgl::VBox* ToolPanel::getView()
 
 void ToolPanel::loadTools()
 {
+    class ToolButtonListener : public Sgl::ActionListener<Sgl::Button>
+    {
+    public:
+        ToolButtonListener(Sgl::Button* button, Tool* tool)
+            : Sgl::ActionListener<Sgl::Button>(button), m_Tool(tool) {}
+
+        virtual void onAction(Sgl::ActionEvent* event) override
+        {
+            Editor::getInstance().setActiveTool(m_Tool);
+        }
+
+    private:
+        Tool* m_Tool = nullptr;
+    };
+
     for (auto tool : Editor::getInstance().getTools())
     {
         LOG_APP_INFO("Loading tool to ToolPanel {name = '%s', icon = '%s'}", tool->getName(), tool->getIconFilename());
-        m_Tools->addChild(new Sgl::Button(RESOURCE_IMAGE(tool->getIconFilename())));
+
+        Sgl::Button* button = new Sgl::Button(RESOURCE_IMAGE(tool->getIconFilename()));
+        button->setOnAction(new ToolButtonListener(button, tool));
+
+        m_Tools->addChild(button);
     }
 }

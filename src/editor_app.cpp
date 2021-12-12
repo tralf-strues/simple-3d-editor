@@ -46,9 +46,7 @@ void EditorApplication::initEditor()
     paintEditor.addTool(brush);
     paintEditor.setActiveTool(brush);
 
-    paintEditor.addTool(new Paint::Brush());
-
-    paintEditor.setForeground(0x90'20'50'FF);
+    paintEditor.addTool(new Paint::Eraser());
 }
 
 const Sgl::LinearGradientFill MAIN_GRADIENT = Sgl::LinearGradientFill(Sgl::LinearGradientFill::Direction::HORIZONTAL,

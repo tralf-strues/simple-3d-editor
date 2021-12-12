@@ -45,9 +45,13 @@ namespace Paint
         void addLayer(Layer* layer);
         void removeLayer(Layer* layer);
 
+        Layer* getActiveLayer();
+        void setActiveLayer(Layer* layer);
+
     private:
         std::string       m_Name;
-        Sml::Texture*     m_Canvas = nullptr;
+        Sml::Texture*     m_Canvas      = nullptr;
+        Layer*            m_ActiveLayer = nullptr;
         std::list<Layer*> m_Layers;
     };
 };

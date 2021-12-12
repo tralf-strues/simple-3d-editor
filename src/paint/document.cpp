@@ -56,16 +56,10 @@ Document::Document(size_t width, size_t height, const char* name) : m_Name(name)
 {
     assert(name);
     m_Canvas = new Sml::Texture(width, height);
-
-    Sml::Renderer::getInstance().pushTarget();
-    Sml::Renderer::getInstance().setTarget(m_Canvas);
-
-    Sml::Renderer::getInstance().setColor(Sml::COLOR_WHITE);
-    Sml::Renderer::getInstance().clear();
-
-    Sml::Renderer::getInstance().popTarget();
     
-    addLayer(new Layer(m_Canvas->getWidth(), m_Canvas->getHeight()));
+    Layer* layer = new Layer(m_Canvas->getWidth(), m_Canvas->getHeight());
+    addLayer(layer);
+    setActiveLayer(layer);
 }
 
 Document::~Document()
@@ -87,6 +81,14 @@ size_t Document::getHeight() const { assert(m_Canvas); return m_Canvas->getHeigh
 
 void Document::applyLayersToCanvas()
 {
+    Sml::Renderer::getInstance().pushTarget();
+    Sml::Renderer::getInstance().setTarget(m_Canvas);
+
+    Sml::Renderer::getInstance().setColor(Sml::COLOR_WHITE);
+    Sml::Renderer::getInstance().clear();
+
+    Sml::Renderer::getInstance().popTarget();
+
     for (auto layer : m_Layers)
     {
         layer->getTexture()->copyTo(m_Canvas, nullptr, nullptr);
@@ -107,3 +109,6 @@ void Document::removeLayer(Layer* layer)
     assert(layer);
     m_Layers.remove(layer);
 }
+
+Layer* Document::getActiveLayer() { return m_ActiveLayer; }
+void Document::setActiveLayer(Layer* layer) { assert(layer); m_ActiveLayer = layer; }

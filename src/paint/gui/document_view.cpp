@@ -67,7 +67,7 @@ public:
 
         Sml::Renderer& renderer = Sml::Renderer::getInstance();
         renderer.pushTarget();
-        renderer.setTarget(getComponent()->getDocument()->getCanvas());
+        renderer.setTarget(getComponent()->getDocument()->getActiveLayer()->getTexture());
 
         Editor::getInstance().getActiveTool()->onActionStart(Sml::Vec2i(m_CurX, m_CurY));
 
@@ -83,7 +83,7 @@ public:
 
         Sml::Renderer& renderer = Sml::Renderer::getInstance();
         renderer.pushTarget();
-        renderer.setTarget(getComponent()->getDocument()->getCanvas());
+        renderer.setTarget(getComponent()->getDocument()->getActiveLayer()->getTexture());
 
         Editor::getInstance().getActiveTool()->onAction(Sml::Vec2i(newX, newY),
                                                              Sml::Vec2i(event->getDeltaX(), event->getDeltaY()));
@@ -100,7 +100,7 @@ public:
 
         Sml::Renderer& renderer = Sml::Renderer::getInstance();
         renderer.pushTarget();
-        renderer.setTarget(getComponent()->getDocument()->getCanvas());
+        renderer.setTarget(getComponent()->getDocument()->getActiveLayer()->getTexture());
 
         Editor::getInstance().getActiveTool()->onActionEnd(Sml::Vec2i(event->getX(), event->getY()));
 
