@@ -75,7 +75,23 @@ void EditorApplication::initEditor()
     paintEditor.setActiveTool(brush);
 
     paintEditor.addTool(new Paint::Brush());
+
+    paintEditor.setForeground(0x90'20'50'FF);
 }
+
+const Sgl::LinearGradientFill MAIN_GRADIENT = Sgl::LinearGradientFill(Sgl::LinearGradientFill::Direction::HORIZONTAL,
+                                                                      {{0.00, 0xFF'00'00'FF},
+                                                                       {0.15, 0xFF'00'FF'FF},
+                                                                       {0.33, 0x00'00'FF'FF},
+                                                                       {0.49, 0x00'FF'FF'FF},
+                                                                       {0.67, 0x00'FF'00'FF},
+                                                                       {0.84, 0xFF'FF'00'FF},
+                                                                       {1.00, 0xFF'00'00'FF}});
+
+const Sgl::LinearGradientFill GRAY_GRADIENT = Sgl::LinearGradientFill(Sgl::LinearGradientFill::Direction::VERTICAL,
+                                                                      {{0.00, 0xFF'FF'FF'FF},
+                                                                       {0.50, 0x00'00'00'00},
+                                                                       {1.00, 0x00'00'00'FF}});
 
 void EditorApplication::initView()
 {
@@ -99,11 +115,17 @@ void EditorApplication::initView()
 
     // m_SceneRoot->getEventDispatcher()->attachHandler({Sml::MouseMovedEvent::getStaticType()}, new MouseMoveListener());
 
-    // Sgl::Slider* slider = new Sgl::Slider(-10, 10);
-    // m_SceneRoot->addChild(slider);
-    // slider->setPrefWidth(100);
-    // slider->setLayoutX(300);
-    // slider->setLayoutY(300);
+    Sgl::Slider* slider = new Sgl::Slider(-10, 10);
+    m_SceneRoot->addChild(slider);
+    slider->setPrefWidth(100);
+    slider->setLayoutX(300);
+    slider->setLayoutY(300);
+
+    Sgl::Slider* rgbSlider = new Sgl::Slider(new Sgl::DefaultSkins::SliderSkin(&MAIN_GRADIENT, nullptr, 0xEE'EE'EE'FF), -10, 10);
+    m_SceneRoot->addChild(rgbSlider);
+    rgbSlider->setPrefWidth(100);
+    rgbSlider->setLayoutX(300);
+    rgbSlider->setLayoutY(350);
 
     // static Sgl::ShadowSpecification sliderShadow{{0, 0}, {1, 1}, 3, 0x11'11'11'66};
     // slider->setShadow(&sliderShadow);

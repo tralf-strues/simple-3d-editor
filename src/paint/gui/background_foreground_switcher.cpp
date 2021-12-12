@@ -151,11 +151,8 @@ public:
 
     virtual void prerenderControl() override
     {
-        m_BackgroundFill = Sgl::ColorFill(Editor::getInstance().getBackground());
-        m_BackgroundRect->setFill(&m_BackgroundFill);
-
-        m_ForegroundFill = Sgl::ColorFill(Editor::getInstance().getForeground());
-        m_ForegroundRect->setFill(&m_ForegroundFill);
+        m_BackgroundRect->setFillColor(Editor::getInstance().getBackground());
+        m_ForegroundRect->setFillColor(Editor::getInstance().getForeground());
     }
 
     virtual const Sgl::Control* getControl() const override { return m_Widget; }
