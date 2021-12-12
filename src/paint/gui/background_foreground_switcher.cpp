@@ -41,7 +41,6 @@ public:
 
             m_ColorPicker = new ColorPicker();
             m_ColorPickerMenu->addChild(m_ColorPicker);
-            m_ColorPickerMenu->setAutoHide(false);
             m_ColorPickerMenu->setShadow(nullptr);
 
             class ColorChangeListener : public Sml::PropertyChangeListener<Sml::Color>

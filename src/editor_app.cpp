@@ -11,34 +11,6 @@
 #include "sgl/scene/controls/slider.h"
 #include "editor_app.h"
 
-class DraggableButtonListener : public Sgl::DragListener<Sgl::Button>
-{
-public:
-    DEFINE_STATIC_LISTENED_EVENT_TYPES_FROM_BASE_CLASS(Sgl::DragListener<Sgl::Button>)
-
-public:
-    DraggableButtonListener(Sgl::Button* button) : Sgl::DragListener<Sgl::Button>(button) {}
-
-    virtual void onDragStart(Sgl::DragStartEvent* event) override
-    {
-        LOG_APP_INFO("DragStartEvent triggered");
-    }
-
-    virtual void onDragEnd(Sgl::DragEndEvent* event) override
-    {
-        LOG_APP_INFO("DragEndEvent triggered");
-    }
-
-    virtual void onDragMove(Sgl::DragMoveEvent* event) override
-    {
-        Sgl::Button* button = dynamic_cast<Sgl::Button*>(event->getTarget());
-        button->setLayoutX(button->getLayoutX() + event->getDeltaX());
-        button->setLayoutY(button->getLayoutY() + event->getDeltaY());
-
-        LOG_APP_INFO("DragMoveEvent<%d, %d> triggered", event->getDeltaX(), event->getDeltaY());
-    }
-};
-
 int main(int argc, const char* argv[])
 {
     EditorApplication application{argc, argv};
@@ -97,6 +69,7 @@ void EditorApplication::initView()
 {
     m_Scene     = new Sgl::Scene(m_Window.getWidth(), m_Window.getHeight());
     m_SceneRoot = new Sgl::AnchorPane();
+    m_SceneRoot->setAutoAdjust(true);
     m_Scene->setRoot(m_SceneRoot);
 
     initMenuBar();
@@ -114,32 +87,6 @@ void EditorApplication::initView()
     // };
 
     // m_SceneRoot->getEventDispatcher()->attachHandler({Sml::MouseMovedEvent::getStaticType()}, new MouseMoveListener());
-
-    Sgl::Slider* slider = new Sgl::Slider(-10, 10);
-    m_SceneRoot->addChild(slider);
-    slider->setPrefWidth(100);
-    slider->setLayoutX(300);
-    slider->setLayoutY(300);
-
-    Sgl::Slider* rgbSlider = new Sgl::Slider(new Sgl::DefaultSkins::SliderSkin(&MAIN_GRADIENT, nullptr, 0xEE'EE'EE'FF), -10, 10);
-    m_SceneRoot->addChild(rgbSlider);
-    rgbSlider->setPrefWidth(100);
-    rgbSlider->setLayoutX(300);
-    rgbSlider->setLayoutY(350);
-
-    // static Sgl::ShadowSpecification sliderShadow{{0, 0}, {1, 1}, 3, 0x11'11'11'66};
-    // slider->setShadow(&sliderShadow);
-
-    // class SliderListener : public Sml::PropertyChangeListener<float>
-    // {
-    // public:
-    //     virtual void onPropertyChange(Sml::PropertyChangeEvent<float>* event) override
-    //     {
-    //         LOG_APP_INFO("SliderListener::onPropertyChange(%f -> %f)", event->getOldValue(), event->getNewValue());
-    //     }
-    // };
-
-    // slider->setOnPropertyChange(new SliderListener());
 }
 
 void EditorApplication::initMenuBar()
@@ -164,11 +111,12 @@ void EditorApplication::initMenuBar()
             Paint::Editor::getInstance().setActiveDocument(document);
 
             Paint::DocumentView* documentView = new Paint::DocumentView(document, getComponent()->getScene());
+
             InnerWindow* component = documentView->getView();
+            getComponent()->getScene()->getRoot()->addChild(documentView->getView());
+
             component->setLayoutX((component->getScene()->getWidth()  - component->computePrefWidth())  / 2);
             component->setLayoutY((component->getScene()->getHeight() - component->computePrefHeight()) / 2);
-
-            getComponent()->getScene()->getRoot()->addChild(documentView->getView());
         }
     };
 
