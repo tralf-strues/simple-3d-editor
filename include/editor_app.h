@@ -50,7 +50,9 @@ private:
     Paint::ToolPanel*       m_ToolPanel;
 
     void initSystem();
+
     void initEditor();
+    void initPlugins();
 
     void initView();
     void initMenuBar();

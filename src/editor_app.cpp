@@ -6,9 +6,15 @@
  * @copyright Copyright (c) 2021
  */
 
+#include <filesystem>
+#include <dlfcn.h>
 #include "sml/sml_log.h"
 #include "sgl/scene/containers/tile_pane.h"
+#include "sgl/scene/controls/scroll_bar.h"
 #include "sgl/scene/controls/slider.h"
+#include "sgl/scene/controls/scroll_pane.h"
+#include "paint/plugin/api_impl.h"
+#include "paint/plugin/plugin_tool.h"
 #include "editor_app.h"
 
 int main(int argc, const char* argv[])
@@ -47,21 +53,37 @@ void EditorApplication::initEditor()
     paintEditor.setActiveTool(brush);
 
     paintEditor.addTool(new Paint::Eraser());
+
+    initPlugins();
 }
 
-const Sgl::LinearGradientFill MAIN_GRADIENT = Sgl::LinearGradientFill(Sgl::LinearGradientFill::Direction::HORIZONTAL,
-                                                                      {{0.00, 0xFF'00'00'FF},
-                                                                       {0.15, 0xFF'00'FF'FF},
-                                                                       {0.33, 0x00'00'FF'FF},
-                                                                       {0.49, 0x00'FF'FF'FF},
-                                                                       {0.67, 0x00'FF'00'FF},
-                                                                       {0.84, 0xFF'FF'00'FF},
-                                                                       {1.00, 0xFF'00'00'FF}});
+void EditorApplication::initPlugins()
+{
+    LOG_APP_INFO("Plugins initialization started.");
 
-const Sgl::LinearGradientFill GRAY_GRADIENT = Sgl::LinearGradientFill(Sgl::LinearGradientFill::Direction::VERTICAL,
-                                                                      {{0.00, 0xFF'FF'FF'FF},
-                                                                       {0.50, 0x00'00'00'00},
-                                                                       {1.00, 0x00'00'00'FF}});
+    plugin::APIImpl api = {};
+
+    for (auto entry : std::filesystem::directory_iterator("res/plugins"))
+    {
+        if (std::filesystem::path(entry.path()).extension().compare(".so") == 0)
+        {
+            LOG_APP_INFO("Plugin '%s' detected.", entry.path().c_str());
+
+            void* handle = dlopen(entry.path().c_str(), RTLD_NOW);
+            plugin::CreateFunction create = reinterpret_cast<plugin::CreateFunction>(dlsym(handle, "Create"));
+
+            plugin::IPlugin* plugin = create(&api);
+            plugin::Tools tools = plugin->GetTools();
+
+            for (uint32_t i = 0; i < tools.count; ++i)
+            {
+                Paint::Editor::getInstance().addTool(new Paint::PluginTool(tools.tools[i]));
+            }
+        }
+    }
+
+    LOG_APP_INFO("Plugins initialization finished.");
+}
 
 void EditorApplication::initView()
 {
@@ -85,6 +107,15 @@ void EditorApplication::initView()
     // };
 
     // m_SceneRoot->getEventDispatcher()->attachHandler({Sml::MouseMovedEvent::getStaticType()}, new MouseMoveListener());
+
+    Sgl::ImageView* imageView = new Sgl::ImageView(new Sgl::Image("res/San_Francisco.png", Sgl::ImageFormat::PNG), true);
+    Sgl::ScrollPane* scrollPane = new Sgl::ScrollPane();
+    scrollPane->setLayoutX(100);
+    scrollPane->setLayoutY(100);
+    scrollPane->setPrefWidth(300);
+    scrollPane->setPrefHeight(200);
+    scrollPane->setContent(imageView);
+    m_SceneRoot->addChild(scrollPane);
 }
 
 void EditorApplication::initMenuBar()
@@ -92,9 +123,9 @@ void EditorApplication::initMenuBar()
     m_SceneRoot->addChild(m_MenuBar = new Sgl::MenuBar(m_Scene));
 
     m_MenuBar->setPrefWidth(EDITOR_WINDOW_WIDTH);
-    Sgl::Menu* fileMenu = m_MenuBar->addMenu("File");
-    Sgl::Menu* editMenu = m_MenuBar->addMenu("Edit");
-    m_MenuBar->pushBackSpacer();
+    Sgl::Menu* fileMenu  = m_MenuBar->addMenu("File");
+    Sgl::Menu* editMenu  = m_MenuBar->addMenu("Edit");
+    Sgl::Menu* toolsMenu = m_MenuBar->addMenu("Tools");
 
     /* File->New */
     class FileNewListener : public Sgl::ActionListener<Sgl::MenuItem>
@@ -121,6 +152,12 @@ void EditorApplication::initMenuBar()
     Sgl::MenuItem* fileNewItem = new Sgl::MenuItem("New");
     fileNewItem->setOnAction(new FileNewListener(fileNewItem));
     fileMenu->getContextMenu()->addChild(fileNewItem);
+
+    /* Tools */
+    for (auto tool : Paint::Editor::getInstance().getTools())
+    {
+        toolsMenu->getContextMenu()->addChild(new Sgl::MenuItem(tool->getName()));
+    }
 
     fileMenu->getContextMenu()->addChild(new Sgl::MenuItem("File item 2"));
     fileMenu->getContextMenu()->addChild(new Sgl::MenuItem("File item 3"));

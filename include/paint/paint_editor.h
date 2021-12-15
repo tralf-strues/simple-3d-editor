@@ -9,6 +9,7 @@
 #pragma once
 
 #include <list>
+#include "plugin/plugin_api.h"
 #include "document.h"
 #include "tool.h"
 
@@ -36,6 +37,9 @@ namespace Paint
         const std::list<Document*>& getDocuments() const;
         void addDocument(Document* document);
 
+        // const std::list<plugin::IPlugin*>& getPlugins() const;
+        // void addPlugin(plugin::IPlugin* plugin);
+
         Sml::Color getBackground() const;
         void setBackground(Sml::Color background);
 
@@ -50,6 +54,8 @@ namespace Paint
 
         Document*            m_ActiveDocument = nullptr;
         std::list<Document*> m_Documents;
+
+        // std::list<plugin::IPlugin*> m_Plugins;
 
         Sml::Color           m_Background = Sml::COLOR_WHITE;
         Sml::Color           m_Foreground = Sml::COLOR_BLACK;

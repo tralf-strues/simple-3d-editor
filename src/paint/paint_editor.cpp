@@ -78,6 +78,17 @@ void Editor::addDocument(Document* document)
     m_Documents.push_back(document);
 }
 
+// const std::list<plugin::IPlugin*>& Editor::getPlugins() const
+// {
+//     return m_Plugins;
+// }
+
+// void Editor::addPlugin(plugin::IPlugin* plugin)
+// {
+//     assert(plugin);
+//     m_Plugins.push_back(plugin);
+// }
+
 Sml::Color Editor::getBackground() const { return m_Background; }
 void Editor::setBackground(Sml::Color background) { m_Background = background; }
 

@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "sgl/scene/controls/scroll_pane.h"
 #include "../../inner_window.h"
 #include "../document.h"
 
@@ -26,10 +27,11 @@ namespace Paint
         InnerWindow* getView();
 
     private:
-        InnerWindow* m_View     = nullptr;
-        Document*    m_Document = nullptr;
-        Canvas*      m_Canvas   = nullptr;
-        std::string  m_Title;
+        Document*        m_Document   = nullptr;
+        InnerWindow*     m_View       = nullptr;
+        Sgl::ScrollPane* m_ScrollPane = nullptr;
+        Canvas*          m_Canvas     = nullptr;
+        std::string      m_Title;
     };
 
     class Canvas : public Sgl::Container

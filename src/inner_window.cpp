@@ -67,6 +67,21 @@ public:
     }
 };
 
+class CloseButtonActionListener : public Sgl::ActionListener<Sgl::Button>
+{
+public:
+    CloseButtonActionListener(Sgl::Button* button, InnerWindow* window)
+        : Sgl::ActionListener<Sgl::Button>(button), m_Window(window) {}
+
+    virtual void onAction(Sgl::ActionEvent* event) override
+    {
+        m_Window->getModifiableParent()->removeChild(m_Window);
+    }
+
+private:
+    InnerWindow* m_Window = nullptr;
+};
+
 const Sgl::Border InnerWindow::DEFAULT_BORDER     = {1, 0xD9'D9'D9'FF};
 const char*       InnerWindow::ICON_CLOSE_IDLE    = "icons/close_32_idle.png";
 const char*       InnerWindow::ICON_CLOSE_HOVERED = "icons/close_32_hovered.png";
@@ -86,6 +101,8 @@ InnerWindow::InnerWindow(const char* title, Sgl::Scene* scene) : m_Title(title)
 
     m_CloseButton->getEventDispatcher()->attachHandler(CloseButtonHoverListener::EVENT_TYPES,
                                                        new CloseButtonHoverListener(m_CloseButton));
+
+    m_CloseButton->setOnAction(new CloseButtonActionListener(m_CloseButton, this));
 
     m_MenuBar = new Sgl::MenuBar(scene);
     m_MenuBar->setFillAcross(false);

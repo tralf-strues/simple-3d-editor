@@ -17,12 +17,15 @@ using namespace Paint;
 const Sgl::ShadowSpecification DocumentView::SHADOW = {{0, 3}, {1.1, 1}, 3, 0x22'22'22'18};
 
 DocumentView::DocumentView(Document* document, Sgl::Scene* scene)
-    : m_View(new InnerWindow(document->getName().c_str(), scene)),
-      m_Document(document),
+    : m_Document(document),
+      m_View(new InnerWindow(document->getName().c_str(), scene)),
+    //   m_ScrollPane(new Sgl::ScrollPane()),
       m_Canvas(new Canvas(document)),
       m_Title(document->getName())
 {
     m_View->updateTitle(m_Title.c_str());
+    // m_ScrollPane->setContent(m_Canvas);
+    // m_View->addChild(m_ScrollPane);
     m_View->addChild(m_Canvas);
 
     // m_View->setShadow(&SHADOW); TODO: Add shadows only after optimizing them!
@@ -59,11 +62,11 @@ public:
 
     virtual void onDragStart(Sgl::DragStartEvent* event)
     {
-        LOG_APP_INFO("CanvasDragListener::onDragStart()");
-
         Sml::Vec2i localPos = getComponent()->computeSceneToLocalPos({event->getX(), event->getY()});
         m_CurX = localPos.x - getComponent()->getTexturePos().x;
         m_CurY = localPos.y - getComponent()->getTexturePos().y;
+     
+        LOG_APP_INFO("CanvasDragListener::onDragStart(canvasPos = {%d, %d})", m_CurX, m_CurY);
 
         Sml::Renderer& renderer = Sml::Renderer::getInstance();
         renderer.pushTarget();
@@ -76,17 +79,17 @@ public:
 
     virtual void onDragMove(Sgl::DragMoveEvent* event)
     {
-        LOG_APP_INFO("CanvasDragListener::onDragMove()");
-
         int32_t newX = m_CurX + event->getDeltaX();
         int32_t newY = m_CurY + event->getDeltaY();
+
+        LOG_APP_INFO("CanvasDragListener::onDragMove(canvasPos = {%d, %d})", newX, newY);
 
         Sml::Renderer& renderer = Sml::Renderer::getInstance();
         renderer.pushTarget();
         renderer.setTarget(getComponent()->getDocument()->getActiveLayer()->getTexture());
 
         Editor::getInstance().getActiveTool()->onAction(Sml::Vec2i(newX, newY),
-                                                             Sml::Vec2i(event->getDeltaX(), event->getDeltaY()));
+                                                        Sml::Vec2i(event->getDeltaX(), event->getDeltaY()));
 
         renderer.popTarget();
 
@@ -96,13 +99,17 @@ public:
 
     virtual void onDragEnd(Sgl::DragEndEvent* event)
     {
-        LOG_APP_INFO("CanvasDragListener::onDragEnd()");
+        Sml::Vec2i localPos = getComponent()->computeSceneToLocalPos({event->getX(), event->getY()});
+        m_CurX = localPos.x - getComponent()->getTexturePos().x;
+        m_CurY = localPos.y - getComponent()->getTexturePos().y;
+
+        LOG_APP_INFO("CanvasDragListener::onDragEnd(canvasPos = {%d, %d})", m_CurX, m_CurY);
 
         Sml::Renderer& renderer = Sml::Renderer::getInstance();
         renderer.pushTarget();
         renderer.setTarget(getComponent()->getDocument()->getActiveLayer()->getTexture());
 
-        Editor::getInstance().getActiveTool()->onActionEnd(Sml::Vec2i(event->getX(), event->getY()));
+        Editor::getInstance().getActiveTool()->onActionEnd(Sml::Vec2i(m_CurX, m_CurY));
 
         renderer.popTarget();
     }
