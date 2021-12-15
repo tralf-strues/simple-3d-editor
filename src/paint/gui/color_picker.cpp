@@ -241,8 +241,8 @@ void ColorPickerSkin::attach(ColorPicker* colorPicker)
     m_ColorPicker = colorPicker;
     m_ColorPicker->addChild(m_RootVBox);
 
-    m_HueSlider->setOnPropertyChange(new HueSliderListener(m_ColorPicker));
-    m_AlphaSlider->setOnPropertyChange(new AlphaSliderListener(m_ColorPicker));
+    m_HueSlider->addOnPropertyChange(new HueSliderListener(m_ColorPicker));
+    m_AlphaSlider->addOnPropertyChange(new AlphaSliderListener(m_ColorPicker));
 
     m_SaturationValueBox->getEventDispatcher()->attachHandler(GradientPressListener::EVENT_TYPES,
                                                               new GradientPressListener(this));

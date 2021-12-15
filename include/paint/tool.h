@@ -10,6 +10,7 @@
 
 #include "sml/sml_math.h"
 #include "sml/sml_graphics_wrapper.h"
+#include "sgl/containers.h"
 
 namespace Paint
 {
@@ -20,6 +21,7 @@ namespace Paint
 
         virtual const char* getName() const = 0;
         virtual const char* getIconFilename() const = 0;
+        virtual Sgl::Container* getPreferencesPanel() { return nullptr; }
 
         virtual void onActionStart(const Sml::Vec2i& pos) {}
         virtual void onAction(const Sml::Vec2i& pos, const Sml::Vec2i& displacement) {}

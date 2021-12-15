@@ -87,13 +87,20 @@ void EditorApplication::initPlugins()
 
 void EditorApplication::initView()
 {
-    m_Scene     = new Sgl::Scene(m_Window.getWidth(), m_Window.getHeight());
-    m_SceneRoot = new Sgl::AnchorPane();
-    m_SceneRoot->setAutoAdjust(true);
+    m_Scene      = new Sgl::Scene(m_Window.getWidth(), m_Window.getHeight());
+    m_SceneRoot  = new Sgl::VBox();
+    m_EditorPane = new Sgl::AnchorPane();
+    m_SceneRoot->setFillAcross(true);
     m_Scene->setRoot(m_SceneRoot);
 
     initMenuBar();
+
+    m_EditorPane->setAutoAdjust(true);
+    m_SceneRoot->addChild(m_EditorPane);
+    m_SceneRoot->setGrowPriority(m_EditorPane, Sgl::BoxContainer::GrowPriority::ALWAYS);
+
     initToolPanel();
+    initPreferencesPanel();
 
     /* Mouse logger */
     // class MouseMoveListener : public Sml::Listener
@@ -115,7 +122,7 @@ void EditorApplication::initView()
     scrollPane->setPrefWidth(300);
     scrollPane->setPrefHeight(200);
     scrollPane->setContent(imageView);
-    m_SceneRoot->addChild(scrollPane);
+    m_EditorPane->addChild(scrollPane);
 }
 
 void EditorApplication::initMenuBar()
@@ -131,7 +138,8 @@ void EditorApplication::initMenuBar()
     class FileNewListener : public Sgl::ActionListener<Sgl::MenuItem>
     {
     public:
-        FileNewListener(Sgl::MenuItem* menuItem) : Sgl::ActionListener<Sgl::MenuItem>(menuItem) {}
+        FileNewListener(Sgl::MenuItem* menuItem, Sgl::AnchorPane* editorPane)
+            : Sgl::ActionListener<Sgl::MenuItem>(menuItem), m_EditorPane(editorPane) {}
 
         virtual void onAction(Sgl::ActionEvent* event) override
         {
@@ -142,15 +150,17 @@ void EditorApplication::initMenuBar()
             Paint::DocumentView* documentView = new Paint::DocumentView(document, getComponent()->getScene());
 
             InnerWindow* component = documentView->getView();
-            getComponent()->getScene()->getRoot()->addChild(documentView->getView());
+            m_EditorPane->addChild(documentView->getView());
 
             component->setLayoutX((component->getScene()->getWidth()  - component->computePrefWidth())  / 2);
             component->setLayoutY((component->getScene()->getHeight() - component->computePrefHeight()) / 2);
         }
+    private:
+        Sgl::AnchorPane* m_EditorPane;
     };
 
     Sgl::MenuItem* fileNewItem = new Sgl::MenuItem("New");
-    fileNewItem->setOnAction(new FileNewListener(fileNewItem));
+    fileNewItem->setOnAction(new FileNewListener(fileNewItem, m_EditorPane));
     fileMenu->getContextMenu()->addChild(fileNewItem);
 
     /* Tools */
@@ -174,15 +184,27 @@ void EditorApplication::initMenuBar()
 void EditorApplication::initToolPanel()
 {
     m_ToolPanel = new Paint::ToolPanel();
-    m_SceneRoot->addChild(m_ToolPanel->getView());
+    m_EditorPane->addChild(m_ToolPanel->getView());
 
-    m_SceneRoot->setTopAnchor(m_ToolPanel->getView(), 1);
-    m_SceneRoot->setBottomAnchor(m_ToolPanel->getView(), 1);
-    m_SceneRoot->setVerticalRelativePositioning(m_ToolPanel->getView(), true);
+    m_EditorPane->setTopAnchor(m_ToolPanel->getView(), 1);
+    m_EditorPane->setBottomAnchor(m_ToolPanel->getView(), 1);
+    m_EditorPane->setVerticalRelativePositioning(m_ToolPanel->getView(), true);
 
-    m_SceneRoot->setLeftAnchor(m_ToolPanel->getView(), 5);
+    m_EditorPane->setLeftAnchor(m_ToolPanel->getView(), 5);
 
     m_ToolPanel->loadTools();
+}
+
+void EditorApplication::initPreferencesPanel()
+{
+    m_PreferencesPanel = new Paint::PreferencesPanel();
+    m_PreferencesPanel->update();
+    
+    m_EditorPane->addChild(m_PreferencesPanel->getView());
+
+    m_EditorPane->setTopAnchor(m_PreferencesPanel->getView(), 0);
+    m_EditorPane->setBottomAnchor(m_PreferencesPanel->getView(), 0);
+    m_EditorPane->setRightAnchor(m_PreferencesPanel->getView(), 0);
 }
 
 int EditorApplication::onQuit()
@@ -199,6 +221,8 @@ int EditorApplication::onQuit()
 void EditorApplication::onUpdate()
 {
     proccessSystemEvents();
+
+    m_PreferencesPanel->update();
 
     m_Scene->update();
     m_Scene->render(m_Scene->getLayoutRegion());

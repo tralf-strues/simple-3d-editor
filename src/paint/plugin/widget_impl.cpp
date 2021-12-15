@@ -66,7 +66,7 @@ void SliderImpl::SetSliderCallback(ISliderCallback* callback)
         ISliderCallback* m_Callback;
     };
 
-    GetComponent()->setOnPropertyChange(new PropertyChangeHandler(callback));
+    GetComponent()->addOnPropertyChange(new PropertyChangeHandler(callback));
 }
 
 float SliderImpl::GetValue() { return GetComponent()->getValue(); }

@@ -21,6 +21,7 @@
 #include "paint/basic_tools.h"
 #include "paint/gui/tool_panel.h"
 #include "paint/gui/document_view.h"
+#include "paint/gui/preferences_panel.h"
 
 constexpr size_t      EDITOR_WINDOW_WIDTH            = 1280;
 constexpr size_t      EDITOR_WINDOW_HEIGHT           = 720;
@@ -39,15 +40,18 @@ public:
     virtual void onUpdate() override;
 
 private:
-    Sml::Window             m_Window;
-    char                    m_WindowTitle[EDITOR_MAX_WINDOW_TITLE_LENGTH];
-    Sml::SystemEventManager m_SystemEventManager;
+    Sml::Window              m_Window;
+    char                     m_WindowTitle[EDITOR_MAX_WINDOW_TITLE_LENGTH];
+    Sml::SystemEventManager  m_SystemEventManager;
 
-    Sgl::Scene*             m_Scene;
-    Sgl::AnchorPane*        m_SceneRoot;
+    Sgl::Scene*              m_Scene;
+    Sgl::VBox*               m_SceneRoot;
+    Sgl::AnchorPane*         m_EditorPane;
 
-    Sgl::MenuBar*           m_MenuBar;
-    Paint::ToolPanel*       m_ToolPanel;
+    Sgl::MenuBar*            m_MenuBar;
+    Paint::ToolPanel*        m_ToolPanel;
+
+    Paint::PreferencesPanel* m_PreferencesPanel;
 
     void initSystem();
 
@@ -57,6 +61,7 @@ private:
     void initView();
     void initMenuBar();
     void initToolPanel();
+    void initPreferencesPanel();
 
     void proccessSystemEvents();
     void proccessWindowEvent(Sml::WindowEvent* event);
