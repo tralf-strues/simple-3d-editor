@@ -188,7 +188,7 @@ class IFilter {
     virtual void Apply(ITexture* canvas) = 0;
     virtual const char* GetName() const = 0;
 
-    virtual IPreferencesPanel* GetPreferencesPanel() const = 0;
+    virtual IPreferencesPanel* GetPreferencesPanel() = 0;
 };
 
 class ITool {
@@ -202,7 +202,7 @@ class ITool {
     virtual const char* GetIconFileName() const = 0;
     virtual const char* GetName() const = 0;
 
-    virtual IPreferencesPanel* GetPreferencesPanel() const = 0;
+    virtual IPreferencesPanel* GetPreferencesPanel() = 0;
 };
 
 struct Tools {

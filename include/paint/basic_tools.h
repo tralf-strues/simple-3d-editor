@@ -34,6 +34,8 @@ namespace Paint
     public:
         virtual const char* getName() const override;
         virtual const char* getIconFilename() const override;
+        
+        virtual Sgl::Container* getPreferencesPanel() override;
 
         virtual void onAction(const Sml::Vec2i& pos, const Sml::Vec2i& displacement) override;
 

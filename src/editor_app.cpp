@@ -61,7 +61,7 @@ void EditorApplication::initPlugins()
 {
     LOG_APP_INFO("Plugins initialization started.");
 
-    plugin::APIImpl api = {};
+    plugin::APIImpl* api = new plugin::APIImpl();
 
     for (auto entry : std::filesystem::directory_iterator("res/plugins"))
     {
@@ -72,7 +72,7 @@ void EditorApplication::initPlugins()
             void* handle = dlopen(entry.path().c_str(), RTLD_NOW);
             plugin::CreateFunction create = reinterpret_cast<plugin::CreateFunction>(dlsym(handle, "Create"));
 
-            plugin::IPlugin* plugin = create(&api);
+            plugin::IPlugin* plugin = create(api);
             plugin::Tools tools = plugin->GetTools();
 
             for (uint32_t i = 0; i < tools.count; ++i)

@@ -10,7 +10,7 @@
 
 using namespace Paint;
 
-const Sgl::ColorFill  PreferencesPanel::DEFAULT_FILL       = Sgl::ColorFill(0xEC'E8'ED'FF);
+const Sgl::ColorFill  PreferencesPanel::DEFAULT_FILL       = Sgl::ColorFill(0xED'E9'EC'FF);
 const Sgl::Background PreferencesPanel::DEFAULT_BACKGROUND = Sgl::Background(&DEFAULT_FILL);
 
 PreferencesPanel::PreferencesPanel() : m_View(new Sgl::Container()) { m_View->setBackground(&DEFAULT_BACKGROUND); }

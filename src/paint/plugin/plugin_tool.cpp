@@ -27,6 +27,11 @@ const char* PluginTool::getIconFilename() const
     return m_IconFilename;
 }
 
+Sgl::Container* PluginTool::getPreferencesPanel()
+{
+    return dynamic_cast<plugin::PreferencesPanelImpl*>(m_PluginTool->GetPreferencesPanel())->GetComponent();
+}
+
 void PluginTool::onActionStart(const Sml::Vec2i& pos)
 {
     plugin::TextureImpl texture(Sml::Renderer::getInstance().getTarget());

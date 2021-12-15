@@ -205,7 +205,10 @@ IButton* WidgetFactoryImpl::CreateButtonWithText(int32_t size_x, int32_t size_y,
 
 ISlider* WidgetFactoryImpl::CreateDefaultSlider(float range_min, float range_max)
 {
-    return new SliderImpl(new Sgl::Slider(range_min, range_max));
+    Sgl::Slider* slider = new Sgl::Slider(range_min, range_max);
+    slider->setPrefWidth(75); // FIXME:
+
+    return new SliderImpl(slider);
 }
 
 ISlider* WidgetFactoryImpl::CreateSlider(int32_t size_x, int32_t size_y, float range_min, float range_max)
@@ -238,5 +241,8 @@ IPalette* WidgetFactoryImpl::CreatePalette()
 
 IPreferencesPanel* WidgetFactoryImpl::CreatePreferencesPanel()
 {
-    return new PreferencesPanelImpl(new Sgl::Container());
+    Sgl::Container* panel = new Sgl::Container();
+    panel->setBackground(nullptr);
+
+    return new PreferencesPanelImpl(panel);
 }

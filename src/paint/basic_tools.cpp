@@ -70,6 +70,40 @@ Sgl::Container* Brush::getPreferencesPanel()
 const char* Eraser::getName() const { return "Eraser"; }
 const char* Eraser::getIconFilename() const { return "icons/eraser.png"; }
 
+Sgl::Container* Eraser::getPreferencesPanel()
+{
+    Sgl::VBox* vbox = new Sgl::VBox();
+    vbox->setBackground(nullptr);
+    vbox->setSpacing(5);
+    vbox->setPadding(Sgl::Insets(5));
+    vbox->setFillAcross(true);
+    vbox->setPrefWidth(125);
+
+    vbox->addChild(new Sgl::Text("Thickness"));
+
+    Sgl::SliderWithLabel* sliderWithLabel = new Sgl::SliderWithLabel(1, 100, "%02.0f");
+    sliderWithLabel->getSlider()->setValue(m_Thickness);
+    vbox->addChild(sliderWithLabel);
+
+    class ThicknessSliderHandler : public Sml::PropertyChangeListener<float>
+    {
+    public:
+        ThicknessSliderHandler(Eraser* eraser) : m_Eraser(eraser) {}
+
+        virtual void onPropertyChange(Sml::PropertyChangeEvent<float>* event) override
+        {
+            m_Eraser->setThickness(static_cast<int32_t>(event->getNewValue()));
+        }
+
+    private:
+        Eraser* m_Eraser;
+    };
+
+    sliderWithLabel->getSlider()->addOnPropertyChange(new ThicknessSliderHandler(this));
+
+    return vbox;
+}
+
 void Eraser::onAction(const Sml::Vec2i& pos, const Sml::Vec2i& displacement)
 {
     Sml::Renderer& renderer = Sml::Renderer::getInstance();
