@@ -14,6 +14,20 @@ using namespace Paint;
 //------------------------------------------------------------------------------
 // DocumentView
 //------------------------------------------------------------------------------
+class ActiveDocumentFilter : public Sgl::FocusListener<InnerWindow>
+{
+public:
+    ActiveDocumentFilter(DocumentView* view) : Sgl::FocusListener<InnerWindow>(view->getView()), m_View(view) {}
+
+    virtual void onFocusReceived(Sgl::FocusReceivedEvent*)
+    {
+        Paint::Editor::getInstance().setActiveDocument(m_View->getDocument());
+    }
+
+private:
+    DocumentView* m_View;
+};
+
 const Sgl::ShadowSpecification DocumentView::SHADOW = {{0, 3}, {1.1, 1}, 3, 0x22'22'22'18};
 
 DocumentView::DocumentView(Document* document, Sgl::Scene* scene)
@@ -28,9 +42,12 @@ DocumentView::DocumentView(Document* document, Sgl::Scene* scene)
     // m_View->addChild(m_ScrollPane);
     m_View->addChild(m_Canvas);
 
+    m_View->getEventDispatcher()->attachFilter(ActiveDocumentFilter::EVENT_TYPES, new ActiveDocumentFilter(this));
+
     // m_View->setShadow(&SHADOW); TODO: Add shadows only after optimizing them!
 }
 
+Document* DocumentView::getDocument() { return m_Document; }
 InnerWindow* DocumentView::getView() { return m_View; }
 
 //------------------------------------------------------------------------------

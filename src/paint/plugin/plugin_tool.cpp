@@ -29,18 +29,18 @@ const char* PluginTool::getIconFilename() const
 
 void PluginTool::onActionStart(const Sml::Vec2i& pos)
 {
-    plugin::TextureImpl texture(Editor::getInstance().getActiveDocument()->getActiveLayer()->getTexture());
+    plugin::TextureImpl texture(Sml::Renderer::getInstance().getTarget());
     m_PluginTool->ActionBegin(&texture, pos.x, pos.y);
 }
 
 void PluginTool::onAction(const Sml::Vec2i& pos, const Sml::Vec2i& displacement)
 {
-    plugin::TextureImpl texture(Editor::getInstance().getActiveDocument()->getActiveLayer()->getTexture());
+    plugin::TextureImpl texture(Sml::Renderer::getInstance().getTarget());
     m_PluginTool->Action(&texture, pos.x, pos.y, displacement.x, displacement.y);
 }
 
 void PluginTool::onActionEnd(const Sml::Vec2i& pos)
 {
-    plugin::TextureImpl texture(Editor::getInstance().getActiveDocument()->getActiveLayer()->getTexture());
+    plugin::TextureImpl texture(Sml::Renderer::getInstance().getTarget());
     m_PluginTool->ActionEnd(&texture, pos.x, pos.y);
 }

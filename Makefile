@@ -26,7 +26,7 @@ LIBS = sdl2 sdl2_ttf sdl2_image
 CXX = clang++
 
 LXXFLAGS = $(shell pkg-config --libs $(LIBS)) $(ModeLinkerOptions)
-CXXFLAGS = $(shell pkg-config --cflags $(LIBS)) $(ModeCompilerOptions) $(AllWarnings) -std=c++17
+CXXFLAGS = $(shell pkg-config --cflags $(LIBS)) $(ModeCompilerOptions) $(NoWarnings) -std=c++17
 # ------------------------------------Options-----------------------------------
 
 # -------------------------------------Files------------------------------------

@@ -24,6 +24,7 @@ namespace Paint
     public:
         DocumentView(Document* document, Sgl::Scene* scene);
 
+        Document* getDocument();
         InnerWindow* getView();
 
     private:
