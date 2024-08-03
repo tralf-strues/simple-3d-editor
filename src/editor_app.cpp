@@ -15,6 +15,7 @@
 #include "sgl/scene/controls/scroll_pane.h"
 #include "paint/plugin/api_impl.h"
 #include "paint/plugin/plugin_tool.h"
+#include "paint/basic_filters.h"
 #include "editor_app.h"
 
 int main(int argc, const char* argv[])
@@ -53,6 +54,9 @@ void EditorApplication::initEditor()
     paintEditor.setActiveTool(brush);
 
     paintEditor.addTool(new Paint::Eraser());
+    paintEditor.addTool(new Paint::RectangleTool());
+
+    paintEditor.addFilter(new Paint::SharpenFilter());
 
     initPlugins();
 }
@@ -130,9 +134,10 @@ void EditorApplication::initMenuBar()
     m_SceneRoot->addChild(m_MenuBar = new Sgl::MenuBar(m_Scene));
 
     m_MenuBar->setPrefWidth(EDITOR_WINDOW_WIDTH);
-    Sgl::Menu* fileMenu  = m_MenuBar->addMenu("File");
-    Sgl::Menu* editMenu  = m_MenuBar->addMenu("Edit");
-    Sgl::Menu* toolsMenu = m_MenuBar->addMenu("Tools");
+    Sgl::Menu* fileMenu    = m_MenuBar->addMenu("File");
+    Sgl::Menu* editMenu    = m_MenuBar->addMenu("Edit");
+    Sgl::Menu* toolsMenu   = m_MenuBar->addMenu("Tools");
+    Sgl::Menu* filtersMenu = m_MenuBar->addMenu("Filters");
 
     /* File->New */
     class FileNewListener : public Sgl::ActionListener<Sgl::MenuItem>
@@ -163,13 +168,35 @@ void EditorApplication::initMenuBar()
     fileNewItem->setOnAction(new FileNewListener(fileNewItem, m_EditorPane));
     fileMenu->getContextMenu()->addChild(fileNewItem);
 
-    /* Tools */
-    for (auto tool : Paint::Editor::getInstance().getTools())
+    /* File->Image */
+    class FileOpenImageListener : public Sgl::ActionListener<Sgl::MenuItem>
     {
-        toolsMenu->getContextMenu()->addChild(new Sgl::MenuItem(tool->getName()));
-    }
+    public:
+        FileOpenImageListener(Sgl::MenuItem* menuItem, Sgl::AnchorPane* editorPane)
+            : Sgl::ActionListener<Sgl::MenuItem>(menuItem), m_EditorPane(editorPane) {}
 
-    fileMenu->getContextMenu()->addChild(new Sgl::MenuItem("File item 2"));
+        virtual void onAction(Sgl::ActionEvent* event) override
+        {
+            Paint::Document* document = new Paint::Document("res/San_Francisco.png");
+            Paint::Editor::getInstance().addDocument(document);
+            Paint::Editor::getInstance().setActiveDocument(document);
+
+            Paint::DocumentView* documentView = new Paint::DocumentView(document, getComponent()->getScene());
+
+            InnerWindow* component = documentView->getView();
+            m_EditorPane->addChild(documentView->getView());
+
+            component->setLayoutX((component->getScene()->getWidth()  - component->computePrefWidth())  / 2);
+            component->setLayoutY((component->getScene()->getHeight() - component->computePrefHeight()) / 2);
+        }
+    private:
+        Sgl::AnchorPane* m_EditorPane;
+    };
+
+    Sgl::MenuItem* fileOpenImage = new Sgl::MenuItem("Open");
+    fileOpenImage->setOnAction(new FileOpenImageListener(fileOpenImage, m_EditorPane));
+    fileMenu->getContextMenu()->addChild(fileOpenImage);
+
     fileMenu->getContextMenu()->addChild(new Sgl::MenuItem("File item 3"));
     fileMenu->getContextMenu()->addChild(new Sgl::MenuItem("File item 4"));
 
@@ -179,6 +206,64 @@ void EditorApplication::initMenuBar()
     editMenu->getContextMenu()->addChild(new Sgl::MenuItem("Edit item 4"));
     editMenu->getContextMenu()->addChild(new Sgl::MenuItem("Edit item 5"));
     editMenu->getContextMenu()->addChild(new Sgl::MenuItem("Edit item 6"));
+
+    initToolsFiltersMenus(toolsMenu, filtersMenu);
+}
+
+void EditorApplication::initToolsFiltersMenus(Sgl::Menu* toolsMenu, Sgl::Menu* filtersMenu)
+{
+    /* Tools */
+    class ToolHandler : public Sgl::ActionListener<Sgl::MenuItem>
+    {
+    public:
+        ToolHandler(Sgl::MenuItem* item, Paint::Tool* tool)
+            : Sgl::ActionListener<Sgl::MenuItem>(item), m_Tool(tool) {}
+
+        virtual void onAction(Sgl::ActionEvent*) override
+        {
+            Paint::Editor::getInstance().setActiveTool(m_Tool);
+        }
+
+    private:
+        Paint::Tool* m_Tool;
+    };
+
+    for (auto tool : Paint::Editor::getInstance().getTools())
+    {
+        Sgl::MenuItem* item = new Sgl::MenuItem(tool->getName());
+        item->setOnAction(new ToolHandler(item, tool));
+
+        toolsMenu->getContextMenu()->addChild(item);
+    }
+
+    /* Filters */
+    class FilterHandler : public Sgl::ActionListener<Sgl::MenuItem>
+    {
+    public:
+        FilterHandler(Sgl::MenuItem* item, Paint::Filter* filter, Sgl::AnchorPane* editorPane)
+            : Sgl::ActionListener<Sgl::MenuItem>(item), m_Filter(filter), m_EditorPane(editorPane) {}
+
+        virtual void onAction(Sgl::ActionEvent*) override
+        {
+            // Paint::Editor::getInstance().applyFilter(m_Filter);
+            InnerWindow* dialog = new InnerWindow(m_Filter->getName(), m_EditorPane->getScene());
+            dialog->addChild(m_Filter->getPreferencesPanel());
+            m_Filter->init(Paint::Editor::getInstance().getActiveDocument()->getActiveLayer()->getTexture());
+            m_EditorPane->addChild(dialog);
+        }
+
+    private:
+        Paint::Filter*   m_Filter;
+        Sgl::AnchorPane* m_EditorPane;
+    };
+
+    for (auto filter : Paint::Editor::getInstance().getFilters())
+    {
+        Sgl::MenuItem* item = new Sgl::MenuItem(filter->getName());
+        item->setOnAction(new FilterHandler(item, filter, m_EditorPane));
+
+        filtersMenu->getContextMenu()->addChild(item);
+    }
 }
 
 void EditorApplication::initToolPanel()

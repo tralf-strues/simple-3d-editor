@@ -12,6 +12,7 @@
 #include "plugin/plugin_api.h"
 #include "document.h"
 #include "tool.h"
+#include "filter.h"
 
 namespace Paint
 {
@@ -30,6 +31,11 @@ namespace Paint
 
         const std::list<Tool*>& getTools() const;
         void addTool(Tool* tool);
+
+        const std::list<Filter*>& getFilters() const;
+        void addFilter(Filter* filter);
+
+        void applyFilter(Filter* filter);
 
         Document* getActiveDocument();
         void setActiveDocument(Document* document); ///< The document must be in the documents list!
@@ -51,6 +57,8 @@ namespace Paint
 
         Tool*                m_ActiveTool     = nullptr;
         std::list<Tool*>     m_Tools;
+
+        std::list<Filter*>   m_Filters;
 
         Document*            m_ActiveDocument = nullptr;
         std::list<Document*> m_Documents;

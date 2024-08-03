@@ -148,6 +148,7 @@ public:
         };
 
         slider->SetSliderCallback(new SliderCallback(sliderLabel, &m_Thickness));
+        slider->SetValue(m_Thickness);
 
         panel->Attach(label, 5, 5);
         panel->Attach(slider, 5, 25);

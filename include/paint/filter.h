@@ -8,11 +8,22 @@
 
 #pragma once
 
-class Filter
-{
-public:
-    virtual ~Filter() = default;
+#include "sml/sml_math.h"
+#include "sml/sml_graphics_wrapper.h"
+#include "sgl/containers.h"
 
-    virtual void apply(ITexture* canvas) = 0;
-    virtual const char* getName() const = 0;
-};
+namespace Paint
+{
+    class Filter
+    {
+        public:
+        virtual ~Filter() = default;
+
+        virtual const char* getName() const = 0;
+
+        virtual Sgl::Container* getPreferencesPanel() { return nullptr; }
+
+        virtual void init(Sml::Texture* texture) {}
+        virtual void apply() = 0;
+    };
+}

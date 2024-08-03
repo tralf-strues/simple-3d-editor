@@ -17,11 +17,11 @@ Layer::Layer(size_t width, size_t height)
     assert(height > 0);
 
     m_Texture = new Sml::Texture(width, height);
-    
+
     Sml::Renderer::getInstance().pushTarget();
     Sml::Renderer::getInstance().setTarget(m_Texture);
 
-    Sml::Renderer::getInstance().setColor(Sml::COLOR_TRANSPARENT);
+    Sml::Renderer::getInstance().setColor(Sml::COLOR_WHITE);
     Sml::Renderer::getInstance().clear();
 
     Sml::Renderer::getInstance().popTarget();
@@ -41,15 +41,28 @@ Document::Document(const char* filename) : m_Name(filename)
 {
     assert(filename);
 
-    m_Canvas = new Sml::Texture;
-    
-    if (!m_Canvas->loadFromImage(filename))
+    Sml::Texture* image = new Sml::Texture();
+
+    if (!image->loadFromImage(filename))
     {
         LOG_APP_ERROR("File '%s' couldn't be found!", filename);
         assert(0);
     }
 
-    addLayer(new Layer(m_Canvas->getWidth(), m_Canvas->getHeight()));
+    m_Canvas = new Sml::Texture(image->getWidth(), image->getHeight());
+
+    Layer* imageLayer = new Layer(m_Canvas->getWidth(), m_Canvas->getHeight());
+    image->copyTo(imageLayer->getTexture(), nullptr, nullptr);
+
+    Layer* layer = new Layer(m_Canvas->getWidth(), m_Canvas->getHeight());
+
+    addLayer(imageLayer);
+    // addLayer(layer);
+
+    // setActiveLayer(layer);
+    setActiveLayer(imageLayer);
+
+    delete image;
 }
 
 Document::Document(size_t width, size_t height, const char* name) : m_Name(name)
@@ -84,7 +97,7 @@ void Document::applyLayersToCanvas()
     Sml::Renderer::getInstance().pushTarget();
     Sml::Renderer::getInstance().setTarget(m_Canvas);
 
-    Sml::Renderer::getInstance().setColor(Sml::COLOR_WHITE);
+    Sml::Renderer::getInstance().setColor(Sml::COLOR_TRANSPARENT);
     Sml::Renderer::getInstance().clear();
 
     Sml::Renderer::getInstance().popTarget();

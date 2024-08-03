@@ -60,6 +60,7 @@ private:
 
     void initView();
     void initMenuBar();
+    void initToolsFiltersMenus(Sgl::Menu* toolsMenu, Sgl::Menu* filtersMenu);
     void initToolPanel();
     void initPreferencesPanel();
 

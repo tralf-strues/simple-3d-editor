@@ -56,6 +56,33 @@ void Editor::addTool(Tool* tool)
     m_Tools.push_back(tool);
 }
 
+const std::list<Filter*>& Editor::getFilters() const
+{
+    return m_Filters;
+}
+
+void Editor::addFilter(Filter* filter)
+{
+    assert(filter);
+    m_Filters.push_back(filter);
+}
+
+void Editor::applyFilter(Filter* filter)
+{
+    assert(filter);
+
+    if (getActiveDocument() != nullptr)
+    {
+        LOG_APP_INFO("Applying '%s' filter.", filter->getName());
+
+        Sml::Renderer::getInstance().pushSetTarget(getActiveDocument()->getActiveLayer()->getTexture());
+
+        filter->apply();
+
+        Sml::Renderer::getInstance().popTarget();
+    }
+}
+
 Document* Editor::getActiveDocument()
 {
     return m_ActiveDocument;
